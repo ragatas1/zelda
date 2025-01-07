@@ -11,10 +11,9 @@ public class LunkMovement : MonoBehaviour
     float verticalMovement;
     float horizontalCheck;
     float verticalCheck;
-    public float one;
-    public float two;
-    public float three;
-    public float four;
+    bool horizontalBool;
+    bool verticalBool;
+
     
     // Start is called before the first frame update
     void Start()
@@ -25,8 +24,8 @@ public class LunkMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        horizontalMovement = Input.GetAxisRaw("Horizontal");
-        verticalMovement = Input.GetAxisRaw("Vertical");
+        horizontalMovement = Input.GetAxisRaw("X axis");
+        verticalMovement = Input.GetAxisRaw("Y axis");
         if (horizontalMovement > 0)
         {
             horizontalCheck = horizontalMovement;
@@ -43,8 +42,11 @@ public class LunkMovement : MonoBehaviour
         {
             verticalCheck = -verticalMovement;
         }
-        if (horizontalCheck > verticalCheck)
+
+        if (horizontalCheck > verticalCheck||(horizontalBool && horizontalMovement !=0))
         {
+            horizontalBool = true;
+            verticalBool = false;
             transform.position = new Vector3(horizontal, vertical, 0);
             horizontal = horizontal + horizontalMovement*speed*Time.deltaTime;
             vertical = (int)vertical;
@@ -57,8 +59,10 @@ public class LunkMovement : MonoBehaviour
                 transform.eulerAngles = new Vector3(0, 0, 90);
             }
         }
-        else if (verticalCheck > horizontalCheck)
+        else if (verticalCheck > horizontalCheck || (verticalBool && verticalMovement != 0))
         {
+            verticalBool = true;
+            horizontalBool = false;
             transform.position = new Vector3(horizontal,vertical, 0);
             vertical = vertical + verticalMovement * speed * Time.deltaTime;
             horizontal = (int)horizontal;
@@ -70,6 +74,11 @@ public class LunkMovement : MonoBehaviour
             {
                 transform.eulerAngles = new Vector3(0, 0, 0);
             }
+        }
+        else 
+        { 
+            verticalBool = false; 
+            horizontalBool = false;
         }
     }
 }
