@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class LunkMovement : MonoBehaviour
 {
-    //movement
+    //generelt
+    [SerializeField] Rigidbody2D rb;
+
+    //bevegelse
     [SerializeField] float fart;
-    float horizontal;
-    float vertical;
     float horizontalMovement;
     float verticalMovement;
     float horizontalCheck;
@@ -20,6 +21,14 @@ public class LunkMovement : MonoBehaviour
     [SerializeField] GameObject sverd;
     [SerializeField] float sverdTid;
     float sverdTimer;
+
+    //skade
+    [SerializeField] int helse;
+    [SerializeField] float iFrames;
+    float iFramesTimer;
+    [SerializeField] float knockbackTid;
+    [SerializeField] float knockbackLengde;
+    bool knockedBack;
     
     // Start is called before the first frame update
     void Start()
@@ -30,10 +39,14 @@ public class LunkMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        FourWayMovement();
-        attack();
+        if (!knockedBack)
+        {
+            bevegelse();
+        }
+        angrep();
+        iFramesTimer = iFramesTimer-1*Time.deltaTime;
     }
-    void FourWayMovement()
+    void bevegelse()
     {
         horizontalMovement = Input.GetAxisRaw("X axis");
         verticalMovement = Input.GetAxisRaw("Y axis");
@@ -53,15 +66,13 @@ public class LunkMovement : MonoBehaviour
         {
             verticalCheck = -verticalMovement;
         }
-        if (!ikkeGaa)
+        if (horizontalCheck > verticalCheck || (horizontalBool && horizontalMovement != 0))
         {
-            if (horizontalCheck > verticalCheck || (horizontalBool && horizontalMovement != 0))
-            {
-                horizontalBool = true;
-                verticalBool = false;
-                transform.position = new Vector3(horizontal, vertical, 0);
-                horizontal = horizontal + horizontalMovement * fart * Time.deltaTime;
-                vertical = (int)vertical;
+           horizontalBool = true;
+           verticalBool = false;
+           rb.velocity = new Vector2 (horizontalMovement * fart, 0);
+           if (!ikkeGaa)
+           {
                 if (horizontalMovement > 0)
                 {
                     transform.eulerAngles = new Vector3(0, 0, 270);
@@ -70,14 +81,15 @@ public class LunkMovement : MonoBehaviour
                 {
                     transform.eulerAngles = new Vector3(0, 0, 90);
                 }
-            }
-            else if (verticalCheck > horizontalCheck || (verticalBool && verticalMovement != 0))
+           }
+        }
+        else if (verticalCheck > horizontalCheck || (verticalBool && verticalMovement != 0))
+        {
+            verticalBool = true;
+            horizontalBool = false;
+            rb.velocity = new Vector2(0, verticalMovement * fart);
+            if (!ikkeGaa)
             {
-                verticalBool = true;
-                horizontalBool = false;
-                transform.position = new Vector3(horizontal, vertical, 0);
-                vertical = vertical + verticalMovement * fart * Time.deltaTime;
-                horizontal = (int)horizontal;
                 if (verticalMovement < 0)
                 {
                     transform.eulerAngles = new Vector3(0, 0, 180);
@@ -87,14 +99,15 @@ public class LunkMovement : MonoBehaviour
                     transform.eulerAngles = new Vector3(0, 0, 0);
                 }
             }
-            else
-            {
-                verticalBool = false;
-                horizontalBool = false;
-            }
+        }
+        else
+        {
+            rb.velocity = Vector2.zero;
+            verticalBool = false;
+            horizontalBool = false;
         }
     }
-    void attack()
+    void angrep()
     {
         if (sverdTimer < 0)
         {
@@ -108,9 +121,30 @@ public class LunkMovement : MonoBehaviour
         else
         {
             ikkeGaa = true;
+            rb.velocity = Vector2.zero;
             sverd.SetActive(true);
             sverdTimer = sverdTimer-1*Time.deltaTime;
         }
 
+    }
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (iFramesTimer < 0)
+        {
+            if (collision.gameObject.tag == "farlig")
+            {
+                iFramesTimer = iFrames;
+                StartCoroutine(knockback());
+                helse = helse - 1;
+            }
+        }
+    }
+    IEnumerator knockback()
+    {
+        knockedBack = true;
+        rb.AddRelativeForce(new Vector2(0, -knockbackLengde),ForceMode2D.Force);
+        yield return new WaitForSeconds(knockbackTid);
+        knockedBack = false;
+        rb.velocity = new Vector2(0,0);
     }
 }
