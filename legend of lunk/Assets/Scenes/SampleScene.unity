@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 487148743}
   - component: {fileID: 487148744}
   m_Layer: 0
-  m_Name: Untitled bird
+  m_Name: lunk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -228,8 +228,11 @@ MonoBehaviour:
   sverdTid: 0.5
   helse: 10
   iFrames: 2
+  iFramesTimer: 0
   knockbackTid: 0.2
   knockbackLengde: 1000
+  sprite: {fileID: 487148739}
+  blinkOffset: 0.2
 --- !u!50 &487148743
 Rigidbody2D:
   serializedVersion: 4
@@ -533,7 +536,7 @@ GameObject:
   - component: {fileID: 1214524942}
   - component: {fileID: 1214524941}
   m_Layer: 0
-  m_Name: Untitled bird (1)
+  m_Name: bad gguy
   m_TagString: farlig
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -662,7 +665,7 @@ GameObject:
   - component: {fileID: 1761966570}
   - component: {fileID: 1761966569}
   m_Layer: 0
-  m_Name: Untitled pillar
+  m_Name: master sword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

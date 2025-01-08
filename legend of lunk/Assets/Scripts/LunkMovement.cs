@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class LunkMovement : MonoBehaviour
 {
-    //generelt
+    [Header("bevegelse")]
     [SerializeField] Rigidbody2D rb;
-
-    //bevegelse
     [SerializeField] float fart;
     float horizontalMovement;
     float verticalMovement;
@@ -17,19 +15,25 @@ public class LunkMovement : MonoBehaviour
     bool verticalBool;
     bool ikkeGaa;
 
-    //angrep
+    [Header("angrep")]
     [SerializeField] GameObject sverd;
     [SerializeField] float sverdTid;
     float sverdTimer;
 
-    //skade
+    [Header("skade")]
     [SerializeField] int helse;
     [SerializeField] float iFrames;
-    float iFramesTimer;
+    public float iFramesTimer;
     [SerializeField] float knockbackTid;
     [SerializeField] float knockbackLengde;
     bool knockedBack;
-    
+
+    [Header("animasjon")]
+    [SerializeField] SpriteRenderer sprite;
+    [SerializeField] float blinkOffset;
+    float blinkTid;
+    bool blink;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -42,9 +46,9 @@ public class LunkMovement : MonoBehaviour
         if (!knockedBack)
         {
             bevegelse();
+            angrep();
         }
-        angrep();
-        iFramesTimer = iFramesTimer-1*Time.deltaTime;
+        iframes();
     }
     void bevegelse()
     {
@@ -133,6 +137,7 @@ public class LunkMovement : MonoBehaviour
         {
             if (collision.gameObject.tag == "farlig")
             {
+                sverd.SetActive(false);
                 iFramesTimer = iFrames;
                 StartCoroutine(knockback());
                 helse = helse - 1;
@@ -145,6 +150,33 @@ public class LunkMovement : MonoBehaviour
         rb.AddRelativeForce(new Vector2(0, -knockbackLengde),ForceMode2D.Force);
         yield return new WaitForSeconds(knockbackTid);
         knockedBack = false;
-        rb.velocity = new Vector2(0,0);
+    }
+    void iframes()
+    {
+        if (iFramesTimer < 0)
+        {
+            sprite.color = new Color(1, 1, 1, 1);
+        }
+        else
+        {
+            iFramesTimer = iFramesTimer - 1 * Time.deltaTime;
+            if (blinkTid < 0)
+            {
+                blink = !blink;
+                blinkTid = blinkOffset;
+            }
+            else
+            {
+                blinkTid = blinkTid - 1 * Time.deltaTime;
+            }
+            if (blink)
+            {
+                sprite.color = new Color(1, 1, 1, .5f);
+            }
+            else
+            {
+                sprite.color = new Color(1, 1, 1, 1);
+            }
+        }
     }
 }
