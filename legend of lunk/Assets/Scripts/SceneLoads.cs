@@ -5,10 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoads : MonoBehaviour
 {
-
-    public void LoadScene(string Scene2)
+    void Update()
     {
-        SceneManager.LoadScene(Scene2);
+        if (Input.anyKeyDown)
+        {
+            SceneManager.LoadScene("Scene2");
+        }
     }
 
 }
