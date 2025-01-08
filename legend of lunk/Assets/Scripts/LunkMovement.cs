@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class LunkMovement : MonoBehaviour
 {
-    [SerializeField] float speed;
+    //movement
+    [SerializeField] float fart;
     float horizontal;
     float vertical;
     float horizontalMovement;
@@ -13,7 +14,12 @@ public class LunkMovement : MonoBehaviour
     float verticalCheck;
     bool horizontalBool;
     bool verticalBool;
+    bool ikkeGaa;
 
+    //angrep
+    [SerializeField] GameObject sverd;
+    [SerializeField] float sverdTid;
+    float sverdTimer;
     
     // Start is called before the first frame update
     void Start()
@@ -23,6 +29,11 @@ public class LunkMovement : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+    {
+        FourWayMovement();
+        attack();
+    }
+    void FourWayMovement()
     {
         horizontalMovement = Input.GetAxisRaw("X axis");
         verticalMovement = Input.GetAxisRaw("Y axis");
@@ -42,43 +53,64 @@ public class LunkMovement : MonoBehaviour
         {
             verticalCheck = -verticalMovement;
         }
+        if (!ikkeGaa)
+        {
+            if (horizontalCheck > verticalCheck || (horizontalBool && horizontalMovement != 0))
+            {
+                horizontalBool = true;
+                verticalBool = false;
+                transform.position = new Vector3(horizontal, vertical, 0);
+                horizontal = horizontal + horizontalMovement * fart * Time.deltaTime;
+                vertical = (int)vertical;
+                if (horizontalMovement > 0)
+                {
+                    transform.eulerAngles = new Vector3(0, 0, 270);
+                }
+                else if (horizontalMovement < 0)
+                {
+                    transform.eulerAngles = new Vector3(0, 0, 90);
+                }
+            }
+            else if (verticalCheck > horizontalCheck || (verticalBool && verticalMovement != 0))
+            {
+                verticalBool = true;
+                horizontalBool = false;
+                transform.position = new Vector3(horizontal, vertical, 0);
+                vertical = vertical + verticalMovement * fart * Time.deltaTime;
+                horizontal = (int)horizontal;
+                if (verticalMovement < 0)
+                {
+                    transform.eulerAngles = new Vector3(0, 0, 180);
+                }
+                else if (verticalMovement > 0)
+                {
+                    transform.eulerAngles = new Vector3(0, 0, 0);
+                }
+            }
+            else
+            {
+                verticalBool = false;
+                horizontalBool = false;
+            }
+        }
+    }
+    void attack()
+    {
+        if (sverdTimer < 0)
+        {
+            ikkeGaa = false;
+            sverd.SetActive(false);
+            if (Input.GetButtonDown("Angrep"))
+            {
+                sverdTimer = sverdTid;
+            }
+        }
+        else
+        {
+            ikkeGaa = true;
+            sverd.SetActive(true);
+            sverdTimer = sverdTimer-1*Time.deltaTime;
+        }
 
-        if (horizontalCheck > verticalCheck||(horizontalBool && horizontalMovement !=0))
-        {
-            horizontalBool = true;
-            verticalBool = false;
-            transform.position = new Vector3(horizontal, vertical, 0);
-            horizontal = horizontal + horizontalMovement*speed*Time.deltaTime;
-            vertical = (int)vertical;
-            if (horizontalMovement > 0)
-            {
-                transform.eulerAngles = new Vector3(0,0,270);
-            }
-            else if (horizontalMovement < 0)
-            {
-                transform.eulerAngles = new Vector3(0, 0, 90);
-            }
-        }
-        else if (verticalCheck > horizontalCheck || (verticalBool && verticalMovement != 0))
-        {
-            verticalBool = true;
-            horizontalBool = false;
-            transform.position = new Vector3(horizontal,vertical, 0);
-            vertical = vertical + verticalMovement * speed * Time.deltaTime;
-            horizontal = (int)horizontal;
-            if (verticalMovement < 0)
-            {
-                transform.eulerAngles = new Vector3(0, 0, 180);
-            }
-            else if (verticalMovement > 0)
-            {
-                transform.eulerAngles = new Vector3(0, 0, 0);
-            }
-        }
-        else 
-        { 
-            verticalBool = false; 
-            horizontalBool = false;
-        }
     }
 }
