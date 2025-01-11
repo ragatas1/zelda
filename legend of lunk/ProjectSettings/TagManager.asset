@@ -5,15 +5,16 @@ TagManager:
   serializedVersion: 2
   tags:
   - farlig
+  - spiller raycast
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - player
   - Water
   - UI
-  - 
-  - 
+  - raycast hitter
+  - enemy
   - 
   - 
   - 
